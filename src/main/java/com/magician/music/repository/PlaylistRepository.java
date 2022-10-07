@@ -25,4 +25,13 @@ public class PlaylistRepository {
                 .setParameter("playlistType", PlaylistType.PLAYED)
                 .getSingleResult();
     }
+
+    public Playlist findRecommendedPlaylist(Long userId){
+        return em.createQuery("select pl from Playlist pl " +
+                        "where pl.user.id = :userId " +
+                        "and pl.playlistType = :playlistType", Playlist.class)
+                .setParameter("userId", userId)
+                .setParameter("playlistType", PlaylistType.RECOMMENDED)
+                .getSingleResult();
+    }
 }
