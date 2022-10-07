@@ -1,9 +1,7 @@
 package com.magician.music.api;
 
-import com.magician.music.domain.Tag;
 import com.magician.music.domain.TagType;
 import com.magician.music.domain.UserTag;
-import com.magician.music.repository.UserTagRepository;
 import com.magician.music.service.TagService;
 import com.magician.music.service.UserService;
 import com.magician.music.service.UserTagService;
@@ -28,16 +26,16 @@ public class UserTagApiController {
     private final TagService tagService;
 
     @PostMapping("user/tag")
-    public void setUserTag(@RequestBody @Validated CreateTagRequest request){
+    public void setUserTag(@RequestBody @Validated CreateTagRequest request) {
         /* 유저의 원래 태그 받아오기 */
 
         /* 변경된 태그 목록 받아오기 */
         List<TagFixedDto> modifiedFixedTagList = request.getUserTagList().stream()
-                .filter(t -> t.getIsFixed()== TagType.FIXED)
+                .filter(t -> t.getIsFixed() == TagType.FIXED)
                 .collect(Collectors.toList());
 
         List<TagFixedDto> modifiedUnFixedTagList = request.getUserTagList().stream()
-                .filter(t -> t.getIsFixed()==TagType.UNFIXED)
+                .filter(t -> t.getIsFixed() == TagType.UNFIXED)
                 .collect(Collectors.toList());
 
         /* 원래 목록과 비교하여 삭제된 태그, 고정된 태그 기록하기 */
@@ -51,12 +49,12 @@ public class UserTagApiController {
 
         //delete로 변경
         userTagService.findTagListByUserId(request.getUserId())
-                .forEach( ut ->
+                .forEach(ut ->
                         userTagService.updateUserTagTypeByUserIdAndTagId
                                 (request.getUserId(), ut.getTag().getId(), TagType.DELETED));
 
         modifiedFixedTagList.forEach(tagFixedDto -> {
-            if(userTagService.findTagByUserIdAndTagName(request.getUserId(), tagFixedDto.getTagName()) != null){
+            if (userTagService.findTagByUserIdAndTagName(request.getUserId(), tagFixedDto.getTagName()) != null) {
                 userTagService.updateUserTagTypeByUserIdAndTagName(request.getUserId(), tagFixedDto.getTagName(), TagType.FIXED);
             } else {
                 userTagService.save(
@@ -69,7 +67,7 @@ public class UserTagApiController {
 
 
         modifiedUnFixedTagList.forEach(tagFixedDto -> {
-            if(userTagService.findTagByUserIdAndTagName(request.getUserId(), tagFixedDto.getTagName()) != null){
+            if (userTagService.findTagByUserIdAndTagName(request.getUserId(), tagFixedDto.getTagName()) != null) {
                 userTagService.updateUserTagTypeByUserIdAndTagName(request.getUserId(), tagFixedDto.getTagName(), TagType.UNFIXED);
             } else {
                 userTagService.save(

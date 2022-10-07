@@ -31,4 +31,14 @@ public class PlaylistMusic implements Serializable {
     @ManyToOne
     @JoinColumn(name = "music_id")
     private Music music;
+
+
+    public PlaylistMusic() {
+
+    }
+
+    public PlaylistMusic(Playlist playlist, Music music) {
+        this.playlist = playlist;
+        this.music = music;
+    }
 }

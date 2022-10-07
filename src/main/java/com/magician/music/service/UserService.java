@@ -15,7 +15,7 @@ public class UserService {
     //회원 가입
     @Transactional(readOnly = true)
     public User findOne(Long id){
-        return userRepository.findOne(id);
+        return userRepository.findById(id).get();
     }
 
 }

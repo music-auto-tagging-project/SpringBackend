@@ -23,7 +23,7 @@ public class UserTagService {
 
     @Transactional(readOnly = true)
     public List<UserTag> findTagListByUserId(Long userId) {
-        return userTagRepository.findTagListByUserId(userId);
+        return userTagRepository.findAllByUserId(userId);
     }
 
     @Transactional
@@ -41,6 +41,6 @@ public class UserTagService {
 
     @Transactional
     public UserTag findTagByUserIdAndTagName(Long userId, String tagName) {
-        return userTagRepository.findOneByUserIdAndTagName(userId, tagName);
+        return userTagRepository.findByUserIdAndTagName(userId, tagName);
     }
 }
