@@ -57,7 +57,7 @@ public class MusicQueryRepository {
     }
     public List<MusicDto> findPlayedMusicList(Long id, PlaylistType type){
         return em.createQuery(
-                        "select distinct new com.magician.music.repository.music.query.MusicDto(m.id, a.imagePath, m.title)" +
+                        "select new com.magician.music.repository.music.query.MusicDto(m.id, a.imagePath, m.title)" +
                                 " from Playlist p" +
                                 " join p.user u" +
                                 " join p.playlistMusicList ml" +
@@ -65,7 +65,8 @@ public class MusicQueryRepository {
                                 " join m.album a" +
                                 " where u.id = :id" +
                                 " and p.playlistType = :type " +
-                                " order by ml.id desc"
+                                " group by m.id " +
+                                " order by max(ml.id) desc"
                         , MusicDto.class)
                 .setParameter("id", id)
                 .setParameter("type", type)
