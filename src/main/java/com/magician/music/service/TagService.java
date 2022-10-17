@@ -1,5 +1,6 @@
 package com.magician.music.service;
 
+import com.magician.music.api.TagApiController;
 import com.magician.music.domain.Tag;
 import com.magician.music.domain.TagType;
 import com.magician.music.repository.TagRepository;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,4 +36,9 @@ public class TagService {
 
     public Tag findTagByName(String tagName){ return  tagRepository.findByName(tagName); }
 
+    public List<String> getTagNameList() {
+        return tagRepository.findAll().stream().map(
+                tag -> tag.getName())
+                .collect(Collectors.toList());
+    }
 }
