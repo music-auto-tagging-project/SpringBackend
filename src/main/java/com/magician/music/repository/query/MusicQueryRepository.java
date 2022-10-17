@@ -1,15 +1,10 @@
-package com.magician.music.repository.music.query;
+package com.magician.music.repository.query;
 
-import com.magician.music.domain.Artist;
-import com.magician.music.domain.Music;
 import com.magician.music.domain.PlaylistType;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,7 +14,7 @@ public class MusicQueryRepository {
 
     private final EntityManager em;
 
-    public List<MusicDto> getMusicArtistList(List<MusicDto> musicDtoList){
+    public List<MusicQueryDto> getMusicArtistList(List<MusicQueryDto> musicDtoList){
         musicDtoList.forEach( md -> {
             md.setMusicArtist(findRecommendMusicArtistList(md.getMusicId()).stream()
                     .map(a->a.getName()).collect(Collectors.toList()));
@@ -28,20 +23,20 @@ public class MusicQueryRepository {
         return musicDtoList;
     }
 
-    public List<ArtistDto> findRecommendMusicArtistList(Long musicId){
+    public List<ArtistQueryDto> findRecommendMusicArtistList(Long musicId){
         return em.createQuery(
-                "select new com.magician.music.repository.music.query.ArtistDto(a.artist.name)" +
+                "select new com.magician.music.repository.query.ArtistQueryDto(a.artist.id, a.artist.name)" +
                         "from Music m" +
                         " join m.artistList a" +
                         " where m.id = :musicId"
-                , ArtistDto.class).setParameter("musicId", musicId).getResultList();
+                , ArtistQueryDto.class).setParameter("musicId", musicId).getResultList();
     }
 
 
     /*return 값 Music으로 바꿔서 다시 작성해보자*/
-    public List<MusicDto> findMusicListByPlaylistType(Long id, PlaylistType type){
+    public List<MusicQueryDto> findMusicListByPlaylistType(Long id, PlaylistType type){
         return em.createQuery(
-                "select new com.magician.music.repository.music.query.MusicDto(m.id, a.imagePath, m.title)" +
+                "select new com.magician.music.repository.query.MusicQueryDto(m.id, a.imagePath, m.title)" +
                         " from Playlist p" +
                         " join p.user u" +
                         " join p.playlistMusicList ml" +
@@ -49,15 +44,15 @@ public class MusicQueryRepository {
                         " join m.album a" +
                         " where u.id = :id" +
                         " and p.playlistType = :type"
-                , MusicDto.class)
+                , MusicQueryDto.class)
                 .setParameter("id", id)
                 .setParameter("type", type)
                 .getResultList();
 
     }
-    public List<MusicDto> findPlayedMusicList(Long id, PlaylistType type){
+    public List<MusicQueryDto> findPlayedMusicList(Long id, PlaylistType type){
         return em.createQuery(
-                        "select new com.magician.music.repository.music.query.MusicDto(m.id, a.imagePath, m.title)" +
+                        "select new com.magician.music.repository.query.MusicQueryDto(m.id, a.imagePath, m.title)" +
                                 " from Playlist p" +
                                 " join p.user u" +
                                 " join p.playlistMusicList ml" +
@@ -67,11 +62,19 @@ public class MusicQueryRepository {
                                 " and p.playlistType = :type " +
                                 " group by m.id " +
                                 " order by max(ml.id) desc"
-                        , MusicDto.class)
+                        , MusicQueryDto.class)
                 .setParameter("id", id)
                 .setParameter("type", type)
                 .getResultList();
 
     }
 
+    public List<MusicQueryDto> findAllMusicName(){
+        return em.createQuery(
+                        "select new com.magician.music.repository.query.MusicQueryDto(m.id, a.imagePath, m.title) " +
+                                "from Music m " +
+                                "join m.album a"
+                        , MusicQueryDto.class)
+                .getResultList();
+    }
 }

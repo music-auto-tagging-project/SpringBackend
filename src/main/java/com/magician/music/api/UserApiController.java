@@ -1,11 +1,10 @@
 package com.magician.music.api;
 
-import com.magician.music.domain.PlaylistMusic;
 import com.magician.music.domain.PlaylistType;
 import com.magician.music.domain.TagType;
 import com.magician.music.domain.User;
-import com.magician.music.repository.music.query.MusicDto;
-import com.magician.music.repository.music.query.MusicQueryRepository;
+import com.magician.music.repository.query.MusicQueryDto;
+import com.magician.music.repository.query.MusicQueryRepository;
 import com.magician.music.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -55,8 +54,13 @@ public class UserApiController {
                 .collect(Collectors.toList());
 
 
-        List<MusicDto> recommendMusicDtoList = musicQueryRepository.getMusicArtistList(musicQueryRepository.findMusicListByPlaylistType(id, PlaylistType.RECOMMENDED));
-        List<MusicDto> playedMusicDtoList = musicQueryRepository.getMusicArtistList(musicQueryRepository.findPlayedMusicList(id, PlaylistType.PLAYED));
+        List<MusicQueryDto> recommendMusicDtoList = musicQueryRepository
+                .getMusicArtistList(musicQueryRepository
+                        .findMusicListByPlaylistType(id, PlaylistType.RECOMMENDED));
+
+        List<MusicQueryDto> playedMusicDtoList = musicQueryRepository
+                .getMusicArtistList(musicQueryRepository
+                        .findPlayedMusicList(id, PlaylistType.PLAYED));
 
         return new MainDto(user.getId(),
                 user.getName(),
@@ -85,8 +89,8 @@ public class UserApiController {
         private String userName;
         private String userImage;
         private List<String> tagList;
-        private List<MusicDto> recommendMusicList;
-        private List<MusicDto> playedMusicList;
+        private List<MusicQueryDto> recommendMusicList;
+        private List<MusicQueryDto> playedMusicList;
 
     }
 
