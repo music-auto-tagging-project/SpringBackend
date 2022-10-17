@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,14 +29,20 @@ public class UserApiController {
 
         User user = userService.findOne(id);
 
-        /* user가 가지고 있는 tag name list (DELETED 제외) */
-        List<String> tagList = user.getTagList().stream()
-                .filter(t -> t.getTagType() != TagType.DELETED)
-                .map(t -> t.getTag().getName())
-                .collect(Collectors.toList());
+        /* user가 가지고 있는 tag name list */
+        List<String> fixedTagList = new ArrayList<>();
 
+        List<String> unfixedTagList = new ArrayList<>();
 
-        return new UserDto(user.getImagePath(), user.getName(), tagList);
+        user.getTagList().stream()
+                .forEach( t-> {
+                    if (t.getTagType()==TagType.FIXED){
+                        fixedTagList.add(t.getTag().getName());
+                    } else if (t.getTagType() == TagType.UNFIXED) {
+                        unfixedTagList.add(t.getTag().getName());
+                    }
+                });
+        return new UserDto(user.getImagePath(), user.getName(), fixedTagList, unfixedTagList);
     }
 
     @GetMapping("main/{userId}")
@@ -66,7 +73,9 @@ public class UserApiController {
     private class UserDto {
         private String profileImage;
         private String userName;
-        private List<String> tagList;
+        private List<String> fixedTagList;
+        private List<String> unfixedTagList;
+
     }
 
     @Data
