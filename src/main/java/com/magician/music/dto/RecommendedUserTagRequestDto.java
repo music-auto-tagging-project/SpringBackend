@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class RecommendedUserTagAndMusicRequestDto {
+public class RecommendedUserTagRequestDto {
     List<Long> musicIdList;
     Long userId;
 }

@@ -7,7 +7,10 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class RecommendedUserTagAndMusicDto {
-    List<String> userTagList;
+public class RecommendedMusicDto {
     List<Long> musicIdList;
+
+    public RecommendedMusicDto(){
+
+    }
 }
