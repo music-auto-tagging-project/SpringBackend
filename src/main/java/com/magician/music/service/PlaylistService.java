@@ -1,9 +1,7 @@
 package com.magician.music.service;
 
 import com.magician.music.domain.*;
-import com.magician.music.dto.PlayMusicDto;
-import com.magician.music.dto.RecommendedUserTagAndMusicDto;
-import com.magician.music.dto.RecommendedUserTagAndMusicRequestDto;
+import com.magician.music.dto.*;
 import com.magician.music.feign.RecommendFeignClient;
 import com.magician.music.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -77,12 +75,15 @@ public class PlaylistService {
 
 
         /* 삽입 후 추천 태그 변경 + 추천 음악 변경 */
-        RecommendedUserTagAndMusicDto recommendedUserTagAndMusicDto = requestRecommendedUserTagAndMusic(userId);
+        RecommendedUserTagDto recommendedUserTagAndMusicDto = requestRecommendedUserTag(userId);
+        RecommendedMusicDto recommendedMusicDto = requestRecommendedMusic(userId);
+
 
         // 받아온 태그 리스트 DB에 적용
         saveUserTag(user, recommendedUserTagAndMusicDto.getUserTagList());
+
         //받아온 추천 음악 리스트 DB에 적용
-        saveRecommendedMusic(user, recommendedUserTagAndMusicDto.getMusicIdList());
+        saveRecommendedMusic(user, recommendedMusicDto.getMusicIdList());
 
         /* api 명세서에 맞춰 변환 */
         return new PlayMusicDto(
@@ -126,7 +127,7 @@ public class PlaylistService {
 
     }
 
-    public RecommendedUserTagAndMusicDto requestRecommendedUserTagAndMusic(Long userId) {
+    public RecommendedUserTagDto requestRecommendedUserTag(Long userId) {
         /* UserId를 통한 추천 태그 변경 + 추천 음악 변경 */
         // User의 들은 음악 플레이리스트 찾음
         Playlist playedPlaylist = playlistRepository.findPlayedPlaylist(userId);
@@ -141,10 +142,19 @@ public class PlaylistService {
                 .map(playlistMusic -> playlistMusic.getMusic().getId())
                 .collect(Collectors.toList());
 
-        return recommendFeignClient.getRecommendedUserTagAndMusic(
-                new RecommendedUserTagAndMusicRequestDto(playedPlaylistMusicIdList, userId));
+        return recommendFeignClient.getRecommendedUserTag(
+                new RecommendedUserTagRequestDto(playedPlaylistMusicIdList, userId));
 
     }
+
+    public RecommendedMusicDto requestRecommendedMusic(Long userId) {
+
+        return recommendFeignClient.getRecommendedMusic(
+                new RecommendedMusicRequestDto(userId));
+
+    }
+
+
 
 
 }

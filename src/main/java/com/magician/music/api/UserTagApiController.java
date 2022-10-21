@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,7 +27,7 @@ public class UserTagApiController {
     private final TagService tagService;
 
     @PostMapping("user/tag")
-    public void setUserTag(@RequestBody @Validated CreateTagRequest request) {
+    public void setUserTag(@RequestBody @Valid CreateTagRequest request) {
         /* 유저의 원래 태그 받아오기 */
 
         /* 변경된 태그 목록 받아오기 */

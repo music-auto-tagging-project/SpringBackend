@@ -1,8 +1,6 @@
 package com.magician.music.domain;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -31,4 +29,5 @@ public class Playlist {
 
     @OneToMany(mappedBy = "playlist")
     private List<PlaylistMusic> playlistMusicList;
+
 }
