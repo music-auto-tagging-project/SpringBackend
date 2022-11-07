@@ -210,4 +210,24 @@ public class PlaylistService {
 
         return new PlaylistMusicResponseDto(musicDtoList, playlist.getName());
     }
+
+    public List<PlaylistDto> getPlaylistListByUserId(Long id) {
+        List<PlaylistDto> playlistDtoList = new ArrayList<>();
+        playlistRepository.findAllByUser(userRepository.findById(id).get())
+                .stream().forEach(playlist -> {
+                    playlistDtoList.add(getPlaylistInfo(playlist));
+                        });
+
+        return playlistDtoList;
+
+    }
+
+    private PlaylistDto getPlaylistInfo(Playlist playlist) {
+        Long count = playlist.getPlaylistMusicList().stream().count();
+        String imagePath = null;
+        if(count != 0)
+            imagePath = playlist.getPlaylistMusicList()
+                    .get(0).getMusic().getAlbum().getImagePath();
+        return new PlaylistDto(playlist.getId(), playlist.getName(), imagePath, count);
+    }
 }

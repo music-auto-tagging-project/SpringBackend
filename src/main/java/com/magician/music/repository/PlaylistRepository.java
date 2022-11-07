@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -45,5 +46,12 @@ public class PlaylistRepository {
                 "where pl.id = :id", Playlist.class)
                 .setParameter("id", playlistId)
                 .getSingleResult();
+    }
+
+    public List<Playlist> findAllByUser(User user) {
+        return em.createQuery("select pl from Playlist pl " +
+                        "where pl.user.id = :id", Playlist.class)
+                .setParameter("id", user.getId())
+                .getResultList();
     }
 }
