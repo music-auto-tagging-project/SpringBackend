@@ -77,4 +77,15 @@ public class MusicQueryRepository {
                         , MusicQueryDto.class)
                 .getResultList();
     }
+
+    public List<MusicQueryDto> findAllMusicNameByName(String content) {
+        return em.createQuery(
+                        "select new com.magician.music.repository.query.MusicQueryDto(m.id, a.imagePath, m.title) " +
+                                "from Music m " +
+                                "join m.album a " +
+                                "where m.title like concat('%', :title, '%')"
+                        , MusicQueryDto.class)
+                .setParameter("title", content)
+                .getResultList();
+    }
 }

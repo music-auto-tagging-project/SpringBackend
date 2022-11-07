@@ -1,4 +1,4 @@
-package com.magician.music.dto;
+package com.magician.music.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,10 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class RecommendedUserTagRequestDto {
+public class RecommendedMusicDto {
     List<Long> musicIdList;
-    Long userId;
+
+    public RecommendedMusicDto(){
+
+    }
 }

@@ -34,4 +34,11 @@ public class TagRepository {
                 .getSingleResult();
     }
 
+    public List<String> findAllByName(String content) {
+        return em.createQuery("select t.name from Tag t " +
+                                "where t.name like concat('%', :tagName, '%') ",
+                        String.class)
+                .setParameter("tagName", content)
+                .getResultList();
+    }
 }
