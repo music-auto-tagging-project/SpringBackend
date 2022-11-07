@@ -8,7 +8,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Repository
+@Repository("v2.MusicQueryRepository")
 @RequiredArgsConstructor
 public class MusicQueryRepository {
 

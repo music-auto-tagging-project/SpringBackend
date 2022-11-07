@@ -69,4 +69,11 @@ public class MusicService {
                 artist.getDebutDate());
 
     }
+
+    public SearchDto searchContent(String content) {
+        List<MusicQueryDto> musicNameList = musicQueryRepository.findAllMusicNameByName(content);
+        List<ArtistQueryDto> artistNameList = artistQueryRepository.findAllArtistNameByName(content);
+        List<String> tagNameList =  tagService.getTagNameListByName(content);
+        return new SearchDto(musicNameList, artistNameList, tagNameList);
+    }
 }
