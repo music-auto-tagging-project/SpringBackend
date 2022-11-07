@@ -3,8 +3,10 @@ package com.magician.music.api;
 import com.magician.music.domain.PlaylistType;
 import com.magician.music.domain.TagType;
 import com.magician.music.domain.User;
+import com.magician.music.dto.PlaylistDto;
 import com.magician.music.repository.query.MusicQueryDto;
 import com.magician.music.repository.query.MusicQueryRepository;
+import com.magician.music.service.PlaylistService;
 import com.magician.music.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 public class UserApiController {
     private final UserService userService;
     private final MusicQueryRepository musicQueryRepository;
+    private final PlaylistService playlistService;
 
     @GetMapping("user/info/{userId}")
     public UserDto getUserPageUserInfo(@PathVariable("userId") Long id) {
@@ -41,7 +44,9 @@ public class UserApiController {
                         unfixedTagList.add(t.getTag().getName());
                     }
                 });
-        return new UserDto(user.getImagePath(), user.getName(), fixedTagList, unfixedTagList);
+
+
+        return new UserDto(user.getImagePath(), user.getName(), fixedTagList, unfixedTagList, playlistService.getPlaylistListByUserId(user.getId()));
     }
 
     @GetMapping("main/{userId}")
@@ -79,6 +84,7 @@ public class UserApiController {
         private String userName;
         private List<String> fixedTagList;
         private List<String> unfixedTagList;
+        private List<PlaylistDto> playlist;
 
     }
 

@@ -1,4 +1,4 @@
-package com.magician.music.dto;
+package com.magician.music.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

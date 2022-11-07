@@ -41,4 +41,8 @@ public class TagService {
                 tag -> tag.getName())
                 .collect(Collectors.toList());
     }
+
+    public List<String> getTagNameListByName(String content) {
+        return tagRepository.findAllByName(content);
+    }
 }

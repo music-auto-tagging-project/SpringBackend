@@ -1,9 +1,9 @@
 package com.magician.music.feign;
 
-import com.magician.music.dto.RecommendedMusicDto;
-import com.magician.music.dto.RecommendedMusicRequestDto;
-import com.magician.music.dto.RecommendedUserTagDto;
-import com.magician.music.dto.RecommendedUserTagRequestDto;
+import com.magician.music.dto.response.RecommendedMusicDto;
+import com.magician.music.dto.request.RecommendedMusicRequestDto;
+import com.magician.music.dto.response.RecommendedUserTagDto;
+import com.magician.music.dto.request.RecommendedUserTagRequestDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

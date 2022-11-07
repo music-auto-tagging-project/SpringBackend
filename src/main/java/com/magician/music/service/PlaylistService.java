@@ -2,6 +2,11 @@ package com.magician.music.service;
 
 import com.magician.music.domain.*;
 import com.magician.music.dto.*;
+import com.magician.music.dto.request.RecommendedMusicRequestDto;
+import com.magician.music.dto.request.RecommendedUserTagRequestDto;
+import com.magician.music.dto.response.PlaylistMusicResponseDto;
+import com.magician.music.dto.response.RecommendedMusicDto;
+import com.magician.music.dto.response.RecommendedUserTagDto;
 import com.magician.music.feign.RecommendFeignClient;
 import com.magician.music.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -102,7 +110,7 @@ public class PlaylistService {
         playlistMusicRepository.deleteByPlaylist(playlist);
         musicIdList.stream().forEach(musicId -> {
             playlistMusicRepository.save(
-                    new PlaylistMusic(playlist,musicRepository.findById(musicId).get()));
+                    new PlaylistMusic(playlist, musicRepository.findById(musicId).get()));
         });
     }
 
@@ -112,14 +120,14 @@ public class PlaylistService {
         /* UNFIXED 태그 중에 추천받지 못한 태그 삭제 */
         userTagRepository.findAllByUserIdAndTagType(user.getId(), TagType.UNFIXED).stream()
                 .forEach(userTag -> {
-                    if(!userTagNameList.contains(userTag.getTag().getName())){
+                    if (!userTagNameList.contains(userTag.getTag().getName())) {
                         userTagRepository.delete(user, userTag);
                     }
                 });
         /* 추천받은 태그 중에 기존에 없던 태그 추가 */
         userTagNameList.stream().forEach(userTagName -> {
             /* 이미 있는 태그면 추가하지 않고, 없는 태그일 시에만 추가 */
-            if(userTagRepository.findByUserIdAndTagName(user.getId(), userTagName) == null) {
+            if (userTagRepository.findByUserIdAndTagName(user.getId(), userTagName) == null) {
                 userTagRepository.save(new UserTag(user, tagRepository.findByName(userTagName), TagType.UNFIXED));
             }
         });
@@ -155,6 +163,71 @@ public class PlaylistService {
     }
 
 
+    @Transactional
+    public void addPlaylist(Long userId, String playlistName, List<Long> musicIdList) {
+        /* 플레이리스트 생성 */
+        Playlist playlist = playlistRepository.save(
+                Playlist.builder()
+                        .name(playlistName)
+                        .user(userRepository.findById(userId).get())
+                        .createDate(LocalDate.now())
+                        .build()
+        );
 
+        addMusicList(playlist, musicIdList);
 
+    }
+
+    @Transactional
+    public void addMusicList(Playlist playlist, List<Long> musicIdList){
+        /* 플레이리스트 음악 삽입 */
+        musicIdList.stream().forEach(musicId ->
+                playlistMusicRepository.save(
+                        new PlaylistMusic(playlist, musicRepository.findById(musicId).get())
+                )
+        );
+    }
+
+    public void changeMusic(Long playlistId, List<Long> musicIdList){
+        Playlist playlist = playlistRepository.findById(playlistId);
+        playlistMusicRepository.deleteByPlaylist(playlist);
+        addMusicList(playlist, musicIdList);
+    }
+
+    @Transactional
+    public void deletePlaylist(Long playlistId){
+        playlistRepository.deleteById(playlistId);
+    }
+
+    public PlaylistMusicResponseDto getPlaylistMusic(Long id) {
+        Playlist playlist = playlistRepository.findById(id);
+        List<PlaylistMusic> playlistMusicList = playlistMusicRepository.findAllByPlaylist(playlist);
+        List<MusicDto> musicDtoList = new ArrayList<>();
+        playlistMusicList.stream().forEach( playlistMusic -> {
+            musicDtoList.add(musicService
+                    .getMusicInfo(playlistMusic.getMusic().getId()));
+        });
+
+        return new PlaylistMusicResponseDto(musicDtoList, playlist.getName());
+    }
+
+    public List<PlaylistDto> getPlaylistListByUserId(Long id) {
+        List<PlaylistDto> playlistDtoList = new ArrayList<>();
+        playlistRepository.findAllByUser(userRepository.findById(id).get())
+                .stream().forEach(playlist -> {
+                    playlistDtoList.add(getPlaylistInfo(playlist));
+                        });
+
+        return playlistDtoList;
+
+    }
+
+    private PlaylistDto getPlaylistInfo(Playlist playlist) {
+        Long count = playlist.getPlaylistMusicList().stream().count();
+        String imagePath = null;
+        if(count != 0)
+            imagePath = playlist.getPlaylistMusicList()
+                    .get(0).getMusic().getAlbum().getImagePath();
+        return new PlaylistDto(playlist.getId(), playlist.getName(), imagePath, count);
+    }
 }
