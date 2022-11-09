@@ -45,6 +45,7 @@ public class ArtistService {
                 music.getId(),
                 music.getAlbum().getImagePath(),
                 music.getTitle(),
+                musicService.getMusicArtistNameList(music),
                 musicService.getMusicTagNameList(music),
                 music.getLyric()
                 );

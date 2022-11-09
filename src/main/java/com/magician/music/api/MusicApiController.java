@@ -2,6 +2,7 @@ package com.magician.music.api;
 
 import com.magician.music.dto.MusicDto;
 import com.magician.music.dto.PlayMusicDto;
+import com.magician.music.dto.response.MusicListDto;
 import com.magician.music.service.MusicService;
 import com.magician.music.service.PlaylistService;
 import lombok.RequiredArgsConstructor;
@@ -24,5 +25,10 @@ public class MusicApiController {
     @GetMapping("music/info/{musicId}")
     public MusicDto searchMusicById(@PathVariable("musicId") Long musicId){
         return musicService.getMusicInfo(musicId);
+    }
+
+    @GetMapping("tag/info/{tagName}")
+    public MusicListDto searchMusicByTagName(@PathVariable("tagName") String tagName){
+        return musicService.getMusicByTagName(tagName);
     }
 }

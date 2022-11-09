@@ -1,6 +1,8 @@
 package com.magician.music.repository.query;
 
+import com.magician.music.domain.Music;
 import com.magician.music.domain.PlaylistType;
+import com.magician.music.domain.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -8,7 +10,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Repository
+@Repository("v2.MusicQueryRepository")
 @RequiredArgsConstructor
 public class MusicQueryRepository {
 
@@ -86,6 +88,17 @@ public class MusicQueryRepository {
                                 "where m.title like concat('%', :title, '%')"
                         , MusicQueryDto.class)
                 .setParameter("title", content)
+                .getResultList();
+    }
+
+    public List<Music> findAllByTag(Tag tag){
+        return em.createQuery(
+                        "select distinct m " +
+                                "from MusicTag mt " +
+                                "join  mt.music m " +
+                                "where mt.tag.name = :tagName"
+                        , Music.class)
+                .setParameter("tagName", tag.getName())
                 .getResultList();
     }
 }

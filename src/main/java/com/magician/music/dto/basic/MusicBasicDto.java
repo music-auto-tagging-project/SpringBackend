@@ -12,7 +12,8 @@ public class MusicBasicDto {
     private Long musicId;
     private String musicImage;
     private String musicTitle;
-    private List<String> musicArtist;
+    private List<String> musicArtistList;
+    private List<String> musicTagList;
     private String lyric;
 
 }
