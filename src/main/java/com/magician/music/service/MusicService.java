@@ -4,6 +4,7 @@ import com.magician.music.domain.*;
 import com.magician.music.dto.MusicDto;
 import com.magician.music.dto.SearchDto;
 import com.magician.music.dto.basic.ArtistBasicDto;
+import com.magician.music.dto.response.MusicListDto;
 import com.magician.music.repository.query.ArtistQueryDto;
 import com.magician.music.repository.query.ArtistQueryRepository;
 import com.magician.music.repository.ArtistRepository;
@@ -13,6 +14,7 @@ import com.magician.music.repository.query.MusicQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -75,5 +77,14 @@ public class MusicService {
         List<ArtistQueryDto> artistNameList = artistQueryRepository.findAllArtistNameByName(content);
         List<String> tagNameList =  tagService.getTagNameListByName(content);
         return new SearchDto(musicNameList, artistNameList, tagNameList);
+    }
+
+    public MusicListDto getMusicByTagName(String tagName) {
+        List<Music> musicList = musicQueryRepository.findAllByTag(tagService.findTagByName(tagName));
+        List<MusicDto> musicDtoList = new ArrayList<>();
+        musicList.stream().forEach(music -> {
+            musicDtoList.add(getMusicInfo(music.getId()));
+        });
+        return new MusicListDto(musicDtoList);
     }
 }
